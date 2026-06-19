@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BigQuery Release Insights</title>
+    <!-- Modern Typography: Google Fonts (Outfit and Inter) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Premium Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Link to custom styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="dark-theme">
+    <div class="glow-bg"></div>
+    
+    <div class="app-container">
+        <!-- Sidebar Navigation (left) / Logo -->
+        <aside class="app-sidebar">
+            <div class="logo-area">
+                <div class="logo-icon">
+                    <i class="fa-solid fa-database"></i>
+                </div>
+                <div class="logo-text">
+                    <h1>BQ Release</h1>
+                    <span>Insights Board</span>
+                </div>
+            </div>
+            
+            <div class="feed-info-card">
+                <h3>Feed Source</h3>
+                <p class="feed-url-text">BigQuery Release Notes</p>
+                <div class="feed-status">
+                    <span class="status-dot online"></span>
+                    <span id="last-updated-time">Checking...</span>
+                </div>
+            </div>
+            
+            <div class="theme-info">
+                <i class="fa-solid fa-circle-info"></i>
+                <p>Click any card in the timeline to load it directly into the X/Twitter Composer.</p>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Top Dashboard Header -->
+            <header class="dashboard-header">
+                <div class="header-title">
+                    <h2>Updates Feed</h2>
+                    <p>Track, analyze, and share the latest Google BigQuery releases</p>
+                </div>
+                
+                <div class="header-actions">
+                    <button id="btn-refresh" class="btn btn-primary" title="Refresh Release Notes">
+                        <span class="spinner-icon hidden"><i class="fa-solid fa-circle-notch fa-spin"></i></span>
+                        <span class="btn-text"><i class="fa-solid fa-arrows-rotate"></i> Refresh</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Search, Filters, and Stats Control Bar -->
+            <section class="control-bar">
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="search-input" placeholder="Search release notes by keywords...">
+                    <button id="search-clear-btn" class="hidden"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="filter-type"><i class="fa-solid fa-filter"></i></label>
+                    <select id="filter-type">
+                        <option value="ALL">All Types</option>
+                        <option value="FEATURE">Features Only</option>
+                        <option value="ISSUE">Issues / Bug Fixes</option>
+                        <option value="ANNOUNCEMENT">Announcements</option>
+                        <option value="OTHER">Others</option>
+                    </select>
+                </div>
+            </section>
+
+            <!-- Error banner -->
+            <div id="error-banner" class="error-banner hidden">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <span id="error-message">Error fetching release notes.</span>
+                <button id="btn-error-close"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <!-- Release Notes Stream/Timeline -->
+            <section class="release-timeline-section">
+                <!-- Skeleton Loader -->
+                <div id="skeleton-loader" class="skeleton-loader">
+                    <div class="skeleton-day">
+                        <div class="skeleton-date"></div>
+                        <div class="skeleton-card"></div>
+                        <div class="skeleton-card"></div>
+                    </div>
+                    <div class="skeleton-day">
+                        <div class="skeleton-date"></div>
+                        <div class="skeleton-card"></div>
+                    </div>
+                </div>
+
+                <!-- Empty state -->
+                <div id="empty-state" class="empty-state hidden">
+                    <i class="fa-solid fa-folder-open"></i>
+                    <h3>No release notes found</h3>
+                    <p>Try adjusting your search query or filter settings.</p>
+                </div>
+
+                <!-- Real timeline container -->
+                <div id="timeline-container" class="timeline-container">
+                    <!-- Loaded dynamically via JavaScript -->
+                </div>
+            </section>
+        </main>
+
+        <!-- Right Side Panel: Composer workspace -->
+        <section class="composer-panel">
+            <div class="composer-sticky">
+                <div class="composer-header">
+                    <h3><i class="fa-brands fa-x-twitter"></i> Share to X / Twitter</h3>
+                    <p>Draft and share the selected update</p>
+                </div>
+
+                <!-- Preview Composer Card -->
+                <div class="composer-card">
+                    <div class="composer-user-profile">
+                        <div class="profile-avatar">
+                            <i class="fa-solid fa-user-astronaut"></i>
+                        </div>
+                        <div class="profile-details">
+                            <span class="user-name">GCP Explorer</span>
+                            <span class="user-handle">@gcp_explorer</span>
+                        </div>
+                    </div>
+
+                    <div class="composer-editor-wrapper">
+                        <textarea id="tweet-textarea" placeholder="Select an update from the left to start drafting..."></textarea>
+                    </div>
+
+                    <!-- Meta toggles for composer -->
+                    <div class="composer-toggles">
+                        <span class="toggle-label">Include:</span>
+                        <div class="toggle-chips">
+                            <button id="toggle-link" class="chip active" title="Toggle release note URL">
+                                <i class="fa-solid fa-link"></i> Source Link
+                            </button>
+                            <button id="toggle-hashtags" class="chip active" title="Toggle default hashtags">
+                                <i class="fa-solid fa-hashtag"></i> Hashtags
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="composer-footer">
+                        <!-- Progress Indicator -->
+                        <div class="character-counter">
+                            <svg class="progress-ring" width="30" height="30">
+                                <circle class="progress-ring__circle-bg" stroke="#1e293b" stroke-width="3" fill="transparent" r="12" cx="15" cy="15"/>
+                                <circle id="progress-ring-bar" class="progress-ring__circle" stroke="#6366f1" stroke-width="3" fill="transparent" r="12" cx="15" cy="15"/>
+                            </svg>
+                            <span id="char-count-text">280</span>
+                        </div>
+
+                        <button id="btn-tweet" class="btn btn-tweet" disabled>
+                            <i class="fa-brands fa-x-twitter"></i> Tweet Update
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Selected Note Preview Info -->
+                <div id="selection-preview-info" class="selection-preview-info">
+                    <span class="info-label">Current Selection</span>
+                    <h4 id="selected-title">None</h4>
+                    <div id="selected-preview-content" class="selected-preview-content">
+                        No update selected yet. Click any update on the timeline to preview and compose your tweet.
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Scripts -->
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
