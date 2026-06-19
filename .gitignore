@@ -24,3 +24,16 @@ env/
 # Flask/Python environment variables
 .env
 .flaskenv
+
+# Testing and coverage
+.pytest_cache/
+.tox/
+.coverage
+.coverage.*
+htmlcov/
+.cache/
+
+# Databases / local storage
+*.db
+*.sqlite
+instance/

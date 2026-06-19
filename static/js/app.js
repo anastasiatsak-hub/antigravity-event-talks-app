@@ -156,6 +156,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (text.includes('FEATURE')) return 'FEATURE';
         if (text.includes('ISSUE') || text.includes('BUG') || text.includes('FIX')) return 'ISSUE';
         if (text.includes('ANNOUNCEMENT')) return 'ANNOUNCEMENT';
+        if (text.includes('BREAKING')) return 'BREAKING';
+        if (text.includes('CHANGE')) return 'CHANGE';
         return 'OTHER';
     }
 
@@ -279,6 +281,8 @@ document.addEventListener('DOMContentLoaded', () => {
             case 'FEATURE': return 'Feature';
             case 'ISSUE': return 'Issue / Fix';
             case 'ANNOUNCEMENT': return 'Announcement';
+            case 'BREAKING': return 'Breaking Change';
+            case 'CHANGE': return 'Change';
             default: return 'Update';
         }
     }
@@ -288,6 +292,8 @@ document.addEventListener('DOMContentLoaded', () => {
             case 'FEATURE': return '<i class="fa-solid fa-wand-magic-sparkles"></i>';
             case 'ISSUE': return '<i class="fa-solid fa-bug-slash"></i>';
             case 'ANNOUNCEMENT': return '<i class="fa-solid fa-bullhorn"></i>';
+            case 'BREAKING': return '<i class="fa-solid fa-triangle-exclamation"></i>';
+            case 'CHANGE': return '<i class="fa-solid fa-sliders"></i>';
             default: return '<i class="fa-solid fa-circle-info"></i>';
         }
     }
@@ -334,6 +340,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (update.type === 'FEATURE') typeLabel = '🚀 New Feature: ';
         else if (update.type === 'ISSUE') typeLabel = '🛠️ Fix/Issue: ';
         else if (update.type === 'ANNOUNCEMENT') typeLabel = '📢 Announcement: ';
+        else if (update.type === 'BREAKING') typeLabel = '⚠️ Breaking Change: ';
+        else if (update.type === 'CHANGE') typeLabel = '🔄 Change: ';
         else typeLabel = '📝 BQ Update: ';
 
         let draft = `${typeLabel}${cleanText}`;

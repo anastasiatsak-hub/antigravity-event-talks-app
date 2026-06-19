@@ -27,8 +27,12 @@
     --color-issue-bg: rgba(244, 63, 94, 0.12);
     --color-announcement: #06b6d4;
     --color-announcement-bg: rgba(6, 182, 212, 0.12);
-    --color-other: #a855f7;
-    --color-other-bg: rgba(168, 85, 247, 0.12);
+    --color-breaking: #f97316;
+    --color-breaking-bg: rgba(249, 115, 22, 0.12);
+    --color-change: #a855f7;
+    --color-change-bg: rgba(168, 85, 247, 0.12);
+    --color-other: #9ca3af;
+    --color-other-bg: rgba(156, 163, 175, 0.12);
     
     /* Transitions & Shadows */
     --transition-fast: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -533,10 +537,22 @@ h1, h2, h3, h4, h5, h6 {
     border: 1px solid rgba(6, 182, 212, 0.25);
 }
 
+.type-badge.breaking {
+    color: var(--color-breaking);
+    background-color: var(--color-breaking-bg);
+    border: 1px solid rgba(249, 115, 22, 0.25);
+}
+
+.type-badge.change {
+    color: var(--color-change);
+    background-color: var(--color-change-bg);
+    border: 1px solid rgba(168, 85, 247, 0.25);
+}
+
 .type-badge.other {
     color: var(--color-other);
     background-color: var(--color-other-bg);
-    border: 1px solid rgba(168, 85, 247, 0.25);
+    border: 1px solid rgba(156, 163, 175, 0.25);
 }
 
 .select-indicator {
